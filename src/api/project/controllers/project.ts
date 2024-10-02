@@ -18,7 +18,6 @@ import { getProgramDetails, getProjectPDA } from '../../../utils/network';
 import { EncryptedSecretKeyMeta } from '../../../utils/types';
 import { ProjectStatus } from '../../../../types/collections';
 
-
 const extractProfile = (profiles, userId) => {
   const profile = profiles.find(
     (item) => item.users_permissions_user.id === userId,
@@ -299,7 +298,7 @@ export default factories.createCoreController(
               return ctx.badRequest(error.message);
             }
 
-          // JSON Content
+            // JSON Content
           } else {
             entity = await strapi.entityService.update(
               'api::project.project',
@@ -334,7 +333,9 @@ export default factories.createCoreController(
                   .signers([keyPair])
                   .rpc();
               }
-            } else if (ctx.request.body.data.status === ProjectStatus.Withdrawn) {
+            } else if (
+              ctx.request.body.data.status === ProjectStatus.Withdrawn
+            ) {
               const wallet = await strapi.entityService.findMany(
                 'api::wallet.wallet',
                 {
@@ -349,7 +350,9 @@ export default factories.createCoreController(
                   .encrypted_private_key as unknown as EncryptedSecretKeyMeta;
                 const privateKey = decryptPrivateKey(encryptedData, iv);
                 const keyPair = Keypair.fromSecretKey(privateKey);
-                const appSecretKey = Uint8Array.from(Buffer.from(process.env.APP_PRIVATE_KEY, 'hex'));
+                const appSecretKey = Uint8Array.from(
+                  Buffer.from(process.env.APP_PRIVATE_KEY, 'hex'),
+                );
                 const AppKeyPair = Keypair.fromSecretKey(appSecretKey);
                 const program = getProgramDetails(keyPair);
                 const projectPDA = getProjectPDA(id, program);
@@ -373,11 +376,9 @@ export default factories.createCoreController(
           const sanitizedResults = await this.sanitizeOutput(entity, ctx);
           return this.transformResponse(sanitizedResults);
         } catch (err) {
-          await strapi.entityService.update(
-            'api::project.project',
-            id,
-            {data: {status: originalStatus}},
-          );
+          await strapi.entityService.update('api::project.project', id, {
+            data: { status: originalStatus },
+          });
           ctx.throw(500, err);
         }
       },
@@ -416,7 +417,8 @@ export default factories.createCoreController(
           );
 
           if (wallet.length === 1) {
-            const { iv, encryptedData } = wallet[0].encrypted_private_key as unknown as EncryptedSecretKeyMeta;
+            const { iv, encryptedData } = wallet[0]
+              .encrypted_private_key as unknown as EncryptedSecretKeyMeta;
             const privateKey = decryptPrivateKey(encryptedData, iv);
             const keyPair = Keypair.fromSecretKey(privateKey);
 

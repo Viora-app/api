@@ -44,7 +44,9 @@ export default factories.createCoreController(
           .first();
 
         if (!vote) {
-          return ctx.badRequest(`No vote was discovered for the time period of ${period}`);
+          return ctx.badRequest(
+            `No vote was discovered for the time period of ${period}`,
+          );
         }
 
         const badge = await strapi.db.query('api::badge.badge').findOne({
@@ -52,7 +54,9 @@ export default factories.createCoreController(
         });
 
         if (!badge) {
-          return ctx.badRequest(`No badge was found for the time period of ${period}`);
+          return ctx.badRequest(
+            `No badge was found for the time period of ${period}`,
+          );
         }
 
         const songBadge = await strapi.db
@@ -70,11 +74,10 @@ export default factories.createCoreController(
         };
       } catch (error) {
         // @todo Persist logs to file
-        console.log(
-          `Failed to assign badge for the period ${period}:`,
-          error,
+        console.log(`Failed to assign badge for the period ${period}:`, error);
+        return ctx.badRequest(
+          `An error occurred while assigning badge for the period ${period}`,
         );
-        return ctx.badRequest(`An error occurred while assigning badge for the period ${period}`);
       }
     },
   }),
