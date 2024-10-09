@@ -6,7 +6,7 @@ This repository contains the API for **Viora**, a decentralized crowdfunding pla
 
 Before running the API, make sure you have the following installed:
 
-- **Node.js** (version >= 14)
+- **Node.js** (version >= 20.14.0)
 - **Yarn** (preferred) or npm
 - **Strapi** (latest version)
 - **PostgreSQL** (or any preferred database)
