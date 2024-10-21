@@ -22,12 +22,6 @@
       "required": false,
       "allowedTypes": ["images"]
     },
-    "song_badges": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::song-badge.song-badge",
-      "mappedBy": "badge"
-    },
     "schedule": {
       "type": "enumeration",
       "enum": ["minute", "day", "week", "month", "year"]
