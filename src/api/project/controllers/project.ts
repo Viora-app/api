@@ -260,7 +260,7 @@ export default factories.createCoreController(
                   MEX_PROJECT_IMAGE_SIZE,
                   'image',
                 );
-                data.images = project.images.concat(uploadedImageIds);
+                data.images =( project.images || []).concat(uploadedImageIds);
               }
 
               // Handle video
@@ -306,7 +306,7 @@ export default factories.createCoreController(
               ctx.request.body,
             );
 
-            if (ctx.request.body.data.status === ProjectStatus.Published) {
+            if (ctx.request.body.data.status === ProjectStatus.Published || ctx.request.body.data.status === ProjectStatus.Withdrawn) {
               const wallet = await strapi.entityService.findMany(
                 'api::wallet.wallet',
                 {
@@ -318,58 +318,40 @@ export default factories.createCoreController(
 
               if (wallet.length === 1) {
                 const { iv, encryptedData } = wallet[0]
-                  .encrypted_private_key as unknown as EncryptedSecretKeyMeta;
+                    .encrypted_private_key as unknown as EncryptedSecretKeyMeta;
                 const privateKey = decryptPrivateKey(encryptedData, iv);
                 const keyPair = Keypair.fromSecretKey(privateKey);
                 const program = getProgramDetails(keyPair);
                 const projectPDA = getProjectPDA(id, program);
 
-                await program.methods
-                  .setPublish()
-                  .accounts({
-                    owner: new PublicKey(wallet[0].public_key),
-                    project: projectPDA,
-                  })
-                  .signers([keyPair])
-                  .rpc();
+                if (ctx.request.body.data.status === ProjectStatus.Published) {
+                  await program.methods
+                    .setPublish()
+                    .accounts({
+                      owner: new PublicKey(wallet[0].public_key),
+                      project: projectPDA,
+                    })
+                    .signers([keyPair])
+                    .rpc();
+                } else if (ctx.request.body.data.status === ProjectStatus.Withdrawn) {
+                    const appSecretKey = Uint8Array.from(
+                      Buffer.from(process.env.APP_PRIVATE_KEY, 'hex'),
+                    );
+                    const AppKeyPair = Keypair.fromSecretKey(appSecretKey);
+                    await program.methods
+                      .finalizeProject()
+                      .accounts({
+                        owner: new PublicKey(wallet[0].public_key),
+                        project: projectPDA,
+                        appAddress: new PublicKey(process.env.APP_PUBLIC_KEY),
+                      })
+                      .signers([AppKeyPair])
+                      .rpc();
+                  }
+              } else {
+                // @todo ridi
+                throw new Error('Could not find associated wallet');
               }
-            } else if (
-              ctx.request.body.data.status === ProjectStatus.Withdrawn
-            ) {
-              const wallet = await strapi.entityService.findMany(
-                'api::wallet.wallet',
-                {
-                  filters: {
-                    users_permissions_user: user.id,
-                  },
-                },
-              );
-
-              if (wallet.length === 1) {
-                const { iv, encryptedData } = wallet[0]
-                  .encrypted_private_key as unknown as EncryptedSecretKeyMeta;
-                const privateKey = decryptPrivateKey(encryptedData, iv);
-                const keyPair = Keypair.fromSecretKey(privateKey);
-                const appSecretKey = Uint8Array.from(
-                  Buffer.from(process.env.APP_PRIVATE_KEY, 'hex'),
-                );
-                const AppKeyPair = Keypair.fromSecretKey(appSecretKey);
-                const program = getProgramDetails(keyPair);
-                const projectPDA = getProjectPDA(id, program);
-
-                await program.methods
-                  .finalizeProject()
-                  .accounts({
-                    owner: new PublicKey(wallet[0].public_key),
-                    project: projectPDA,
-                    appAddress: new PublicKey(process.env.APP_PUBLIC_KEY),
-                  })
-                  .signers([AppKeyPair])
-                  .rpc();
-              }
-            } else {
-              // @todo ridi
-              throw new Error('Could not find associated wallet');
             }
           }
 
