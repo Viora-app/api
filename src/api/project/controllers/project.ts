@@ -28,6 +28,7 @@ const extractProfile = (profiles, userId) => {
       last_name: profile.last_name,
       user_id: userId,
       profile_id: profile.id,
+      avatar: profile.avatar,
     };
   }
 };
@@ -106,11 +107,12 @@ export default factories.createCoreController(
           );
 
           const users = [
-            ...projects.map((item) => item.users_permissions_user.id),
+            ...projects.map((item) => item.users_permissions_user?.id),
             ...exclusiveContents.map(
-              (item) => item.project.users_permissions_user.id,
+              (item) => item.project?.users_permissions_user?.id,
             ),
           ];
+
           const uniqueUsers = users.filter(
             (id: string, index: number) => users.indexOf(id) === index,
           );
@@ -127,6 +129,7 @@ export default factories.createCoreController(
               },
               populate: {
                 users_permissions_user: true,
+                avatar: true,
               },
             },
           );
@@ -143,7 +146,7 @@ export default factories.createCoreController(
             soft_goal: project.soft_goal,
             deadline: project.deadline,
             hard_goal: project.hard_goal,
-            owner: extractProfile(profiles, project.users_permissions_user.id),
+            owner: extractProfile(profiles, project?.users_permissions_user?.id),
             images: project.images,
             reaction_count: project.reaction_count,
             createdAt: project.createdAt,
@@ -161,7 +164,7 @@ export default factories.createCoreController(
             },
             owner: extractProfile(
               profiles,
-              content.project.users_permissions_user.id,
+              content.project?.users_permissions_user?.id,
             ),
             reaction_count: content.reaction_count,
             accessible_tiers: content.accessible_tiers,
@@ -201,6 +204,7 @@ export default factories.createCoreController(
           ctx.throw(500, err);
         }
       },
+
       // PUT
       async update(ctx) {
         const { id } = ctx.params;
@@ -224,7 +228,7 @@ export default factories.createCoreController(
           originalStatus = project.status as ProjectStatus;
 
           // Ensure ownership
-          if (!project || project.users_permissions_user.id !== user.id) {
+          if (!project || project.users_permissions_user?.id !== user.id) {
             return ctx.unauthorized(
               'Only the owner is allowed to update a project',
             );
