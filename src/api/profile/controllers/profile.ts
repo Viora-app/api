@@ -28,6 +28,8 @@ export default factories.createCoreController('api::profile.profile', ({ strapi 
 
     return {
       ...profile,
+      profileId: profile.id,
+      id: user.id,
       address: wallet.address,
     };
   }
