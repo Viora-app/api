@@ -4,6 +4,13 @@ module.exports = ({ env }) => ({
       jwtSecret: env('ADMIN_JWT_SECRET'),
     },
   },
+  sentry: {
+    enabled: true,
+    config: {
+      dsn: env('SENTRY_DSN'),
+      sendMetadata: true,
+    },
+  },
   upload: {
     config: {
       provider: 'local', // Default provider (can be 'local' or another like 'aws-s3', 'cloudinary', etc.)

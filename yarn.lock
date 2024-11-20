@@ -2995,6 +2995,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@strapi/helper-plugin@npm:4.25.13":
+  version: 4.25.13
+  resolution: "@strapi/helper-plugin@npm:4.25.13"
+  dependencies:
+    axios: 1.7.4
+    date-fns: 2.30.0
+    formik: 2.4.0
+    immer: 9.0.19
+    lodash: 4.17.21
+    qs: 6.11.1
+    react-helmet: 6.1.0
+    react-intl: 6.4.1
+    react-query: 3.39.3
+    react-select: 5.7.0
+  peerDependencies:
+    "@strapi/design-system": 1.19.0
+    "@strapi/icons": 1.19.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+    react-router-dom: ^5.2.0
+    styled-components: ^5.2.1
+  checksum: b342433ed25932b71e04153f7851fc16c4c1a47afe8115fb91ffe3f46fba1b6e4ddf905a15d91953050a641dfe45c6398b92a91ccd62b922be90878816e9082f
+  languageName: node
+  linkType: hard
+
 "@strapi/helper-plugin@npm:4.25.7":
   version: 4.25.7
   resolution: "@strapi/helper-plugin@npm:4.25.7"
@@ -3199,6 +3224,24 @@ __metadata:
     react-router-dom: ^5.2.0
     styled-components: ^5.2.1
   checksum: c50d59756fddeb061291aa0b9434a3897f45fd65e7f6f5af2cb0afd8eb75eb55fec0e3511ae4bc12e93a2072ca50055bd6556b7b47c5267d1dedd1a025ab81f0
+  languageName: node
+  linkType: hard
+
+"@strapi/plugin-sentry@npm:4.25.13":
+  version: 4.25.13
+  resolution: "@strapi/plugin-sentry@npm:4.25.13"
+  dependencies:
+    "@sentry/node": 6.19.7
+    "@strapi/design-system": 1.19.0
+    "@strapi/helper-plugin": 4.25.13
+    "@strapi/icons": 1.19.0
+  peerDependencies:
+    "@strapi/strapi": ^4.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+    react-router-dom: ^5.2.0
+    styled-components: ^5.2.1
+  checksum: 92254f03de8c95b0be3c045ce851665550203d075cd4ac33a43bd31e4a0fca6e599cec985db0e871263a2ddfe504d6cebbb825da7bb449180a702ada42de6bb1
   languageName: node
   linkType: hard
 
@@ -4834,6 +4877,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: c7c9f2ae9e0b9bad7d6f9a4dff030930b12ee667dedf54c3c776714f91681feb743c509ac0796ae5c01e12c4ab4a2bee74905068dd200fbc1ab86f9814578fb0
+  languageName: node
+  linkType: hard
+
+"axios@npm:1.7.4":
+  version: 1.7.4
+  resolution: "axios@npm:1.7.4"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: 0c17039a9acfe6a566fca8431ba5c1b455c83d30ea6157fec68a6722878fcd30f3bd32d172f6bee0c51fe75ca98e6414ddcd968a87b5606b573731629440bfaf
   languageName: node
   linkType: hard
 
@@ -15452,6 +15506,7 @@ __metadata:
     "@solana/web3.js": ^1.95.3
     "@strapi/plugin-cloud": 4.25.1
     "@strapi/plugin-i18n": 4.25.1
+    "@strapi/plugin-sentry": 4.25.13
     "@strapi/plugin-users-permissions": ^4.25.6
     "@strapi/strapi": 4.25.1
     "@typescript-eslint/eslint-plugin": ^7.14.1
