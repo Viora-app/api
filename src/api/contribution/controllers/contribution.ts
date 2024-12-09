@@ -95,9 +95,9 @@ export default factories.createCoreController(
           await program.methods
             .contribute(new BN(tier.id), new BN(tier.amount))
             .accounts({
-              contributor: new PublicKey(wallet[0].public_key),
+              contributer: new PublicKey(wallet[0].public_key),
               project: projectPDA,
-              appAddress: new PublicKey(process.env.APP_PUBLIC_KEY),
+              // appAddress: new PublicKey(process.env.APP_PUBLIC_KEY),
             })
             .signers([keyPair])
             .rpc();
