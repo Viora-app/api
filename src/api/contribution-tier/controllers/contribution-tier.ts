@@ -50,7 +50,7 @@ export default factories.createCoreController(
             program,
           );
 
-          const projectState =
+          const project =
             await program.account.project.fetch(projectPDA);
 
           await program.methods
