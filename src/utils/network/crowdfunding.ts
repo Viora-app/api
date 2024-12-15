@@ -48,16 +48,16 @@ export type Crowdfunding = {
       ]
     },
     {
-      "name": "contribute",
+      "name": "contributeSpl",
       "discriminator": [
-        82,
-        33,
-        68,
-        131,
-        32,
-        0,
-        205,
-        95
+        56,
+        201,
+        213,
+        12,
+        65,
+        27,
+        3,
+        245
       ],
       "accounts": [
         {
