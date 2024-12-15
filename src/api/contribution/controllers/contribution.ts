@@ -1,11 +1,12 @@
 import { factories } from '@strapi/strapi';
-import { BN } from '@coral-xyz/anchor';
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { BN, web3 } from '@coral-xyz/anchor';
+import { Keypair, PublicKey, Connection } from '@solana/web3.js';
 
 import { decryptPrivateKey } from '../../../utils/crypto';
 import { getProgramDetails, getProjectPDA } from '../../../utils/network';
 import { EncryptedSecretKeyMeta } from '../../../utils/types';
 import { ProjectStatus } from '../../../../types/collections';
+import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
 
 export default factories.createCoreController(
   'api::contribution.contribution',
@@ -75,7 +76,7 @@ export default factories.createCoreController(
 
         // Return the created contribution
         const sanitizedEntity = await this.sanitizeOutput(contribution, ctx);
-
+        // Begin send TX to solana program
         const wallet = await strapi.entityService.findMany(
           'api::wallet.wallet',
           {
@@ -90,18 +91,26 @@ export default factories.createCoreController(
             .encrypted_private_key as unknown as EncryptedSecretKeyMeta;
           const privateKey = decryptPrivateKey(encryptedData, iv);
           const keyPair = Keypair.fromSecretKey(privateKey);
-          const program = getProgramDetails(keyPair);
+          const program = getProgramDetails(keyPair); // Tell the program which wallet wants to connect to it
           const projectPDA = getProjectPDA(String(project.id), program);
+          const connection = new Connection(process.env.NETWORK_URL, 'confirmed');
+          const contributer_ata = getOrCreateAssociatedTokenAccount(connection, keyPair, new web3.PublicKey(process.env.USDC_MINT),keyPair.publicKey)
           await program.methods
-            .contribute(new BN(tier.id), new BN(tier.amount))
+            .contributeSpl(new BN(tier.id), new BN(tier.amount))
             .accounts({
-              contributor: new PublicKey(wallet[0].public_key),
-              project: projectPDA,
-              appAddress: new PublicKey(process.env.APP_PUBLIC_KEY),
+              contributer: new PublicKey(wallet[0].public_key),
+              // contributer_ata: contributer_ata,
+              project:"",
+              // project_ata:"",
+              // token_program:"",
+              // usdc_mint:"",
+              
+              
+              // appAddress: new PublicKey(process.env.APP_PUBLIC_KEY),
             })
             .signers([keyPair])
             .rpc();
-
+            console.log(`contributed ro program ====================> {} amount {}`, program, contribution_tier.amount)
           // Check funding progress and update the project status
         } else {
           throw new Error('Could not find associated wallet');

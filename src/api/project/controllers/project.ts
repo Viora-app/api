@@ -332,7 +332,7 @@ export default factories.createCoreController(
                   await program.methods
                     .setPublish()
                     .accounts({
-                      owner: new PublicKey(wallet[0].public_key),
+                      artist: new PublicKey(wallet[0].public_key),
                       project: projectPDA,
                     })
                     .signers([keyPair])
@@ -345,9 +345,9 @@ export default factories.createCoreController(
                     await program.methods
                       .finalizeProject()
                       .accounts({
-                        owner: new PublicKey(wallet[0].public_key),
+                        artist: new PublicKey(wallet[0].public_key),
                         project: projectPDA,
-                        appAddress: new PublicKey(process.env.APP_PUBLIC_KEY),
+                        // appAddress: new PublicKey(process.env.APP_PUBLIC_KEY),
                       })
                       .signers([AppKeyPair])
                       .rpc();
@@ -401,13 +401,13 @@ export default factories.createCoreController(
               },
             },
           );
-
+          console.log(`User Id //////////////////////////////////////////////////: ${user.id}`);
           if (wallet.length === 1) {
             const { iv, encryptedData } = wallet[0]
               .encrypted_private_key as unknown as EncryptedSecretKeyMeta;
             const privateKey = decryptPrivateKey(encryptedData, iv);
             const keyPair = Keypair.fromSecretKey(privateKey);
-
+            console.log(`User PK //////////////////////////////////////////////////: ${keyPair.publicKey}`);
             try {
               const program = getProgramDetails(keyPair);
               const projectPDA = getProjectPDA(result.data.id, program);
@@ -421,14 +421,14 @@ export default factories.createCoreController(
                   new BN(
                     new Date(result.data.attributes.deadline).getTime() / 1000,
                   ),
-                  new PublicKey(wallet[0].public_key),
+                  // new PublicKey(wallet[0].public_key),
                 )
                 .accounts({
-                  owner: new PublicKey(wallet[0].public_key),
+                  artist: new PublicKey(wallet[0].public_key),
                 })
                 .signers([keyPair])
                 .rpc();
-
+                console.log(`networkResult //////////////////////////////////////////////////: ${networkResult}`);
               console.log(
                 'Project campaign successfully created on the blockchain',
               );

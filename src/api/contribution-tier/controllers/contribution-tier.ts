@@ -50,8 +50,8 @@ export default factories.createCoreController(
             program,
           );
 
-          const projectState =
-            await program.account.projectState.fetch(projectPDA);
+          const project =
+            await program.account.project.fetch(projectPDA);
 
           await program.methods
             .addContributionTier(
@@ -60,7 +60,7 @@ export default factories.createCoreController(
             )
             .accounts({
               project: projectPDA,
-              owner: new PublicKey(wallet[0].public_key),
+              artist: new PublicKey(wallet[0].public_key),
             })
             .signers([keyPair])
             .rpc();
